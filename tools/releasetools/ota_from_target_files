@@ -572,6 +572,8 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
                      ""+input_zip.read("SYSTEM/bin/backuptool.functions"))
       common.ZipWriteStr(output_zip, "system/bin/linear.sh",
                      ""+input_zip.read("SYSTEM/bin/linear.sh"))
+      common.ZipWriteStr(output_zip, "supersu/supersu.zip",
+                     ""+input_zip.read("SYSTEM/addon.d/UPDATE-SuperSU.zip"))
     script.Mount("/system")
     script.RunBackup("backup")
     script.Unmount("/system")
@@ -652,13 +654,20 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.ShowProgress(0.02, 10)
     if block_based:
       script.Mount("/system")
-    script.RunBackup("restore")
+      script.RunBackup("restore")
     if block_based:
       script.Unmount("/system")
 
     if block_based:
       script.Mount("/system")
     script.Linear("restore")
+    if block_based:
+      script.Unmount("/system")
+
+    if block_based:
+      script.Print("Flashing SuperSU...")
+      script.Mount("/system")
+    script.FlashSuperSU()
     if block_based:
       script.Unmount("/system")
 
