@@ -570,6 +570,8 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
                      ""+input_zip.read("SYSTEM/bin/backuptool.sh"))
       common.ZipWriteStr(output_zip, "system/bin/backuptool.functions",
                      ""+input_zip.read("SYSTEM/bin/backuptool.functions"))
+      common.ZipWriteStr(output_zip, "system/bin/linear.sh",
+                     ""+input_zip.read("SYSTEM/bin/linear.sh"))
     script.Mount("/system")
     script.RunBackup("backup")
     script.Unmount("/system")
@@ -651,6 +653,12 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     if block_based:
       script.Mount("/system")
     script.RunBackup("restore")
+    if block_based:
+      script.Unmount("/system")
+
+    if block_based:
+      script.Mount("/system")
+    script.Linear("restore")
     if block_based:
       script.Unmount("/system")
 

@@ -146,6 +146,16 @@ class EdifyGenerator(object):
         self.script.append('delete("/system/bin/backuptool.sh");')
         self.script.append('delete("/system/bin/backuptool.functions");')
 
+  def Linear(self, command):
+    self.script.append('package_extract_file("system/bin/linear.sh", "/tmp/linear.sh");')
+    if not self.info.get("use_set_metadata", False):
+      self.script.append('set_perm(0, 0, 0755, "/tmp/linear.sh");')
+    else:
+      self.script.append('set_metadata("/tmp/linear.sh", "uid", 0, "gid", 0, "mode", 0755);')
+    self.script.append(('run_program("/tmp/linear.sh", "%s");' % command))
+    if command == "restore":
+        self.script.append('delete("/system/bin/linear.sh");')
+
   def ShowProgress(self, frac, dur):
     """Update the progress bar, advancing it over 'frac' over the next
     'dur' seconds.  'dur' may be zero to advance it via SetProgress
