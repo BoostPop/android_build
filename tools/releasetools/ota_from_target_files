@@ -654,17 +654,20 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.ShowProgress(0.02, 10)
     if block_based:
       script.Mount("/system")
-      script.RunBackup("restore")
+    script.RunBackup("restore")
     if block_based:
       script.Unmount("/system")
 
     if block_based:
+      script.Print(" ")
+      script.Print("Check Linear.conf backup...")
       script.Mount("/system")
     script.Linear("restore")
     if block_based:
       script.Unmount("/system")
 
     if block_based:
+      script.Print(" ")
       script.Print("Flashing SuperSU...")
       script.Mount("/system")
     script.FlashSuperSU()
