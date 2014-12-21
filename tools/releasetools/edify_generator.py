@@ -146,16 +146,6 @@ class EdifyGenerator(object):
         self.script.append('delete("/system/bin/backuptool.sh");')
         self.script.append('delete("/system/bin/backuptool.functions");')
 
-  def Linear(self, command):
-    self.script.append('package_extract_file("system/bin/linear.sh", "/tmp/linear.sh");')
-    if not self.info.get("use_set_metadata", False):
-      self.script.append('set_perm(0, 0, 0755, "/tmp/linear.sh");')
-    else:
-      self.script.append('set_metadata("/tmp/linear.sh", "uid", 0, "gid", 0, "mode", 0755);')
-    self.script.append(('run_program("/tmp/linear.sh", "%s");' % command))
-    if command == "restore":
-        self.script.append('delete("/system/bin/linear.sh");')
-
   def FlashSuperSU(self):
     self.script.append('package_extract_dir("supersu", "/tmp/supersu");')
     self.script.append('run_program("/sbin/busybox", "unzip", "/tmp/supersu/supersu.zip", "META-INF/com/google/android/*", "-d", "/tmp/supersu");')

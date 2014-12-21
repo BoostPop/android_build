@@ -570,8 +570,6 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
                      ""+input_zip.read("SYSTEM/bin/backuptool.sh"))
       common.ZipWriteStr(output_zip, "system/bin/backuptool.functions",
                      ""+input_zip.read("SYSTEM/bin/backuptool.functions"))
-      common.ZipWriteStr(output_zip, "system/bin/linear.sh",
-                     ""+input_zip.read("SYSTEM/bin/linear.sh"))
       common.ZipWriteStr(output_zip, "supersu/supersu.zip",
                      ""+input_zip.read("SYSTEM/addon.d/UPDATE-SuperSU.zip"))
     script.Mount("/system")
@@ -655,14 +653,6 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     if block_based:
       script.Mount("/system")
     script.RunBackup("restore")
-    if block_based:
-      script.Unmount("/system")
-
-    if block_based:
-      script.Print(" ")
-      script.Print("Check Linear.conf backup...")
-      script.Mount("/system")
-    script.Linear("restore")
     if block_based:
       script.Unmount("/system")
 
