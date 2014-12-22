@@ -553,6 +553,23 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
   device_specific.FullOTA_InstallBegin()
 
+  script.ShowProgress(0.5, 0)
+  script.Print(" ")
+  script.Print("*********************************************");
+  script.Print("*                                           *");
+  script.Print("*  ######                                   *");
+  script.Print("*  #     #                                  *");
+  script.Print("*  #     #                   ####           *");
+  script.Print("*  #     #                  #               *");
+  script.Print("*  ######    ####    ####   #      #####    *");
+  script.Print("*  #     #  #    #  #    #   ###     #      *");
+  script.Print("*  #     #  #    #  #    #      #    #      *");
+  script.Print("*  #     #  #    #  #    #      #    #      *");
+  script.Print("*  ######    ####    ####   ####     #      *");
+  script.Print("*                                           *");
+  script.Print("*********************************************");
+  script.Print(" ")
+
   if OPTIONS.backuptool:
     if block_based:
       common.ZipWriteStr(output_zip, "system/bin/backuptool.sh",
