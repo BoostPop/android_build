@@ -580,10 +580,6 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print("*********************************************");
   script.Print(" ")
 
-  if block_based:
-    common.ZipWriteStr(output_zip, "system/addon.d/supersu/supersu.zip",
-                     ""+input_zip.read("SYSTEM/addon.d/supersu/supersu.zip"))
-
   CopyInstallTools(output_zip)
   script.UnpackPackageDir("install", "/tmp/install")
   script.SetPermissionsRecursive("/tmp/install", 0, 0, 0755, 0644, None, None)
@@ -613,13 +609,13 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     # image.  This has the effect of writing new data from the package
     # to the entire partition, but lets us reuse the updater code that
     # writes incrementals to do it.
+    script.Print(" ")
+    script.Print("...Installing BoostPop")
     system_tgt = GetImage("system", OPTIONS.input_tmp, OPTIONS.info_dict)
     system_tgt.ResetFileMap()
     system_diff = common.BlockDifference("system", system_tgt, src=None)
     system_diff.WriteScript(script, output_zip)
   else:
-    script.Print(" ")
-    script.Print("...Formatting system")
     script.FormatPartition("/system")
     script.Mount("/system", recovery_mount_options)
     if not has_recovery_patch:
@@ -648,6 +644,9 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   if HasVendorPartition(input_zip):
     vendor_items = ItemSet("vendor", "META/vendor_filesystem_config.txt")
     script.ShowProgress(0.1, 0)
+
+    script.Print(" ")
+    script.Print("...Vendor")
 
     if block_based:
       vendor_tgt = GetImage("vendor", OPTIONS.input_tmp, OPTIONS.info_dict)
@@ -680,13 +679,14 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     if block_based:
       script.Unmount("/system")
 
-    if block_based:
-      script.Mount("/system")
-    script.Print(" ")
-    script.Print("...Flashing SuperSU ")
-    script.FlashSuperSU()
-    if block_based:
-      script.Unmount("/system")
+  if block_based:
+    script.Mount("/system")
+    common.ZipWriteStr(output_zip, "system/addon.d/supersu/supersu.zip",
+                     ""+input_zip.read("SYSTEM/addon.d/supersu/supersu.zip"))
+    script.Unmount("/system")	
+  script.Print(" ")
+  script.Print("...Flashing SuperSU ")
+  script.FlashSuperSU()
 
   script.Print(" ");
   script.Print("...Flashing kernel");
