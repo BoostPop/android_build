@@ -37,14 +37,22 @@ endif
 # Decouple NDK library selection with platform compiler version
 $(combo_2nd_arch_prefix)TARGET_NDK_GCC_VERSION := 4.8
 
+# Decouple android compiler version from kernel compiler version
 ifeq ($(strip $(TARGET_SM_AND)),)
 ifeq ($(strip $(TARGET_GCC_VERSION_EXP)),)
-$(combo_2nd_arch_prefix)TARGET_GCC_VERSION := 4.8
+$(combo_2nd_arch_prefix)TARGET_AND_GCC_VERSION := 4.8
 else
-$(combo_2nd_arch_prefix)TARGET_GCC_VERSION := $(TARGET_GCC_VERSION_EXP)
+$(combo_2nd_arch_prefix)TARGET_AND_GCC_VERSION := $(TARGET_GCC_VERSION_EXP)
 endif
 else
 $(combo_2nd_arch_prefix)TARGET_GCC_VERSION := $(TARGET_SM_AND)
+endif
+
+# Decouple kernel compiler version from android compiler version
+ifeq ($(strip $(TARGET_SM_KERNEL)),)
+$(combo_2nd_arch_prefix)TARGET_KERNEL_GCC_VERSION := $($(combo_2nd_arch_prefix)TARGET_AND_GCC_VERSION)
+else
+$(combo_2nd_arch_prefix)TARGET_KERNEL_GCC_VERSION := $(TARGET_SM_KERNEL)
 endif
 
 # Allow overriding of NDK toolchain version
@@ -65,6 +73,11 @@ include $(BUILD_SYSTEM)/combo/fdo.mk
 ifeq ($(strip $($(combo_2nd_arch_prefix)TARGET_TOOLS_PREFIX)),)
 $(combo_2nd_arch_prefix)TARGET_TOOLCHAIN_ROOT := prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-$($(combo_2nd_arch_prefix)TARGET_GCC_VERSION)
 $(combo_2nd_arch_prefix)TARGET_TOOLS_PREFIX := $($(combo_2nd_arch_prefix)TARGET_TOOLCHAIN_ROOT)/bin/arm-linux-androideabi-
+endif
+
+# You can set TARGET_KERNEL_TOOLS_PREFIX to get gcc from somewhere else
+ifeq ($(strip $($(combo_2nd_arch_prefix)TARGET_KERNEL_TOOLS_PREFIX)),)
+TARGET_KERNEL_TOOLS_PREFIX := arm-eabi-
 endif
 
 $(combo_2nd_arch_prefix)TARGET_CC := $($(combo_2nd_arch_prefix)TARGET_TOOLS_PREFIX)gcc$(HOST_EXECUTABLE_SUFFIX)
