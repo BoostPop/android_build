@@ -20,8 +20,6 @@
 PRODUCT_PACKAGES := \
     Bluetooth \
     MusicFX \
-    OneTimeInitializer \
-    Provision \
     SystemUI \
     WallpaperCropper
 
