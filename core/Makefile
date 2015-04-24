@@ -1505,7 +1505,7 @@ otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 ifeq ($(USE_PREBUILT_CHROMIUM),1)
 ifneq ($(PRODUCT_PREBUILT_WEBVIEWCHROMIUM),yes)
 	@echo "Running Chromium prebuilt setup script..."
-	$(hide) . $(TOPDIR)vendor/boostpop/utils/chromium_prebuilt.sh $(TOP)
+	$(hide) . $(TOPDIR)vendor/boostpop/tools/chromium_prebuilt.sh $(TOP)
 endif
 endif
 
