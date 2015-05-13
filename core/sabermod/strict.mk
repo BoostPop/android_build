@@ -43,19 +43,21 @@ ifeq ($(strip $(ENABLE_STRICT_ALIASING)),true)
       endif
     endif
   endif
+else
+  LOCAL_CFLAGS += -fno-strict-aliasing
 endif
 
-
+# Check for local cflags.
 ifneq ($(strip $(ENABLE_STRICT_ALIASING)),true)
-  LOCAL_CFLAGS += -fno-strict-aliasing
-else
-  ifneq ($(strip $(LOCAL_CLANG)),true)
-    LOCAL_CFLAGS += -Wstrict-aliasing=3 -Werror=strict-aliasing
-  else
-    LOCAL_CFLAGS += -Wstrict-aliasing=2 -Werror=strict-aliasing
-  endif
-  ifeq (1,$(words $(filter $(LOCAL_DISABLE_STRICT_ALIASING),$(LOCAL_MODULE))))
-    LOCAL_CFLAGS += -fno-strict-aliasing
+  ifeq (1,$(words $(filter -fstrict-aliasing,$(LOCAL_CFLAGS))))
+    ifneq ($(strip $(LOCAL_CLANG)),true)
+      LOCAL_CFLAGS += -Wstrict-aliasing=3 -Werror=strict-aliasing
+    else
+      LOCAL_CFLAGS += -Wstrict-aliasing=2 -Werror=strict-aliasing
+    endif
+    ifeq (1,$(words $(filter $(LOCAL_DISABLE_STRICT_ALIASING),$(LOCAL_MODULE))))
+      LOCAL_CFLAGS += -fno-strict-aliasing
+    endif
   endif
 endif
 
