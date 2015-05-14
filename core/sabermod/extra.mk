@@ -15,6 +15,7 @@
 # Extra SaberMod C flags for gcc and clang
 # Seperated by arch, clang and host
 
+# Target build flags
 ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),true)
   ifneq ($(strip $(LOCAL_CLANG)),true)
     ifdef EXTRA_SABERMOD_GCC_VECTORIZE_CFLAGS
@@ -36,6 +37,7 @@ ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),true)
   endif
 endif
 
+# Clang vectorization flags.
 ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),true)
   ifeq ($(strip $(LOCAL_CLANG)),true)
     ifneq (1,$(words $(filter $(LOCAL_DISABLE_SABERMOD_CLANG_VECTORIZE_CFLAGS),$(LOCAL_MODULE))))
@@ -48,6 +50,7 @@ ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),true)
   endif
 endif
 
+# Host gcc flags
 ifeq ($(strip $(LOCAL_IS_HOST_MODULE)),true)
   ifneq ($(strip $(LOCAL_CLANG)),true)
     ifdef LOCAL_CFLAGS
@@ -57,6 +60,19 @@ ifeq ($(strip $(LOCAL_IS_HOST_MODULE)),true)
     endif
     ifeq ($(strip $(LOCAL_O3_OPTIMIZATIONS_MODE)),on)
       LOCAL_CFLAGS += $(EXTRA_SABERMOD_HOST_GCC_O3_CFLAGS)
+    endif
+  endif
+endif
+
+# Enable the memory leak sanitizer for all arm targets.
+ifneq ($(filter arm arm64,$(TARGET_ARCH)),)
+  ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),true)
+    ifneq ($(strip $(LOCAL_CLANG)),true)
+      ifdef LOCAL_CFLAGS
+        LOCAL_CFLAGS += -fsanitize=leak
+      else
+        LOCAL_CFLAGS := -fsanitize=leak
+      endif
     endif
   endif
 endif
