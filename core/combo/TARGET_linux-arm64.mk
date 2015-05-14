@@ -126,7 +126,7 @@ TARGET_RELEASE_CFLAGS := \
 			-frename-registers
 
 ifneq ($(strip $(O3_OPTIMIZATIONS)),true)
-  TARGET_RELEASE_CFLAGS += -O2 -g
+  TARGET_RELEASE_CFLAGS += -O2
 endif
 
 libc_root := bionic/libc
