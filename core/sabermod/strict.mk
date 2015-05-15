@@ -21,24 +21,26 @@
 
 # Warnings and errors are turned on by default if strict-aliasing is set in LOCAL_CFLAGS.  Also check for arm mode strict-aliasing.
 # GCC can handle a warning level of 3 and clang a level of 2.
+
 ifeq ($(strip $(ENABLE_STRICT_ALIASING)),true)
   ifeq ($(strip $(LOCAL_ARM_MODE)),arm)
-  arm_objects_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)$(arm_objects_mode)_CFLAGS)
+  arm_objects_mode := $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),arm)
     ifneq ($(strip $(LOCAL_CLANG)),true)
+      arm_objects_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)$(arm_objects_mode)_CFLAGS)
       ifneq ($(filter -fstrict-aliasing,$(arm_objects_cflags)),)
         ifdef LOCAL_CFLAGS
-          LOCAL_CFLAGS += -Wstrict-aliasing=3 -Werror=strict-aliasing
+          LOCAL_CFLAGS += $(GCC_STRICT_CFLAGS)
         else
-          LOCAL_CFLAGS := -Wstrict-aliasing=3 -Werror=strict-aliasing
+          LOCAL_CFLAGS := $(GCC_STRICT_CFLAGS)
         endif
       endif
     else
       arm_objects_cflags := $(call $(LOCAL_2ND_ARCH_VAR_PREFIX)convert-to-$(my_host)clang-flags,$(arm_objects_cflags))
       ifneq ($(filter -fstrict-aliasing,$(arm_objects_cflags)),)
         ifdef LOCAL_CFLAGS
-          LOCAL_CFLAGS += -Wstrict-aliasing=2 -Werror=strict-aliasing
+          LOCAL_CFLAGS += $(CLANG_STRICT_CFLAGS)
         else
-          LOCAL_CFLAGS := -Wstrict-aliasing=2 -Werror=strict-aliasing
+          LOCAL_CFLAGS := $(CLANG_STRICT_CFLAGS)
         endif
       endif
     endif
@@ -51,13 +53,14 @@ endif
 ifneq ($(strip $(ENABLE_STRICT_ALIASING)),true)
   ifeq (1,$(words $(filter -fstrict-aliasing,$(LOCAL_CFLAGS))))
     ifneq ($(strip $(LOCAL_CLANG)),true)
-      LOCAL_CFLAGS += -Wstrict-aliasing=3 -Werror=strict-aliasing
+      LOCAL_CFLAGS += $(GCC_STRICT_CFLAGS)
     else
-      LOCAL_CFLAGS += -Wstrict-aliasing=2 -Werror=strict-aliasing
-    endif
-    ifeq (1,$(words $(filter $(LOCAL_DISABLE_STRICT_ALIASING),$(LOCAL_MODULE))))
-      LOCAL_CFLAGS += -fno-strict-aliasing
+      LOCAL_CFLAGS += $(CLANG_STRICT_CFLAGS)
     endif
   endif
 endif
-
+ifeq ($(strip $(ENABLE_STRICT_ALIASING)),true)
+  ifeq (1,$(words $(filter $(LOCAL_DISABLE_STRICT_ALIASING),$(LOCAL_MODULE))))
+      LOCAL_CFLAGS += -fno-strict-aliasing
+  endif
+endif
