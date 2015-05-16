@@ -64,7 +64,7 @@ ifeq ($(strip $(LOCAL_IS_HOST_MODULE)),true)
   endif
 endif
 
-# Enable the memory leak sanitizer for all arm targets.
+# Enable the memory leak sanitizer and openmp for all arm targets.
 ifneq ($(filter arm arm64,$(TARGET_ARCH)),)
   ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),true)
     ifneq ($(strip $(LOCAL_CLANG)),true)
@@ -72,6 +72,14 @@ ifneq ($(filter arm arm64,$(TARGET_ARCH)),)
         LOCAL_CFLAGS += -fsanitize=leak
       else
         LOCAL_CFLAGS := -fsanitize=leak
+      endif
+      ifneq (1,$(words $(filter libwebviewchromium libc_netbsd,$(LOCAL_MODULE))))
+        LOCAL_CFLAGS += -fopenmp
+        ifdef LOCAL_LDLIBS
+          LOCAL_LDLIBS += -lgomp -lgcc
+        else
+          LOCAL_LDLIBS := -lgomp -lgcc
+        endif
       endif
     endif
   endif
