@@ -45,17 +45,37 @@ ifeq ($(strip $(ENABLE_STRICT_ALIASING)),true)
       endif
     endif
   endif
+  ifeq ($(strip $(TARGET_ARCH)),arm64)
+    ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),true)
+      ifneq ($(strip $(LOCAL_CLANG)),true)
+        ifdef LOCAL_CFLAGS
+          LOCAL_CFLAGS += $(GCC_STRICT_CFLAGS)
+        else
+          LOCAL_CFLAGS := $(GCC_STRICT_CFLAGS)
+        endif
+      else
+        ifdef LOCAL_CFLAGS
+          LOCAL_CFLAGS += $(CLANG_STRICT_CFLAGS)
+        else
+          LOCAL_CFLAGS := $(CLANG_STRICT_CFLAGS)
+        endif
+      endif
+    endif
+  endif
 else
   LOCAL_CFLAGS += -fno-strict-aliasing
 endif
 
-# Check for local cflags.
-ifneq ($(strip $(ENABLE_STRICT_ALIASING)),true)
-  ifeq (1,$(words $(filter -fstrict-aliasing,$(LOCAL_CFLAGS))))
-    ifneq ($(strip $(LOCAL_CLANG)),true)
-      LOCAL_CFLAGS += $(GCC_STRICT_CFLAGS)
-    else
-      LOCAL_CFLAGS += $(CLANG_STRICT_CFLAGS)
+ifneq ($(strip $(TARGET_ARCH)),arm64)
+
+  # Check for local cflags.
+  ifneq ($(strip $(ENABLE_STRICT_ALIASING)),true)
+    ifeq (1,$(words $(filter -fstrict-aliasing,$(LOCAL_CFLAGS))))
+      ifneq ($(strip $(LOCAL_CLANG)),true)
+        LOCAL_CFLAGS += $(GCC_STRICT_CFLAGS)
+      else
+        LOCAL_CFLAGS += $(CLANG_STRICT_CFLAGS)
+      endif
     endif
   endif
 endif
