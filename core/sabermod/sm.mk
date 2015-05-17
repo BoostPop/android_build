@@ -21,18 +21,6 @@ include $(BUILD_SYSTEM)/sabermod/O3.mk
 # Extra sabermod variables
 include $(BUILD_SYSTEM)/sabermod/extra.mk
 
-ifeq ($(strip $(ENABLE_PTHREAD)),true)
-
-  # posix thread (pthread) support
-  ifneq (1,$(words $(filter $(LOCAL_DISABLE_PTHREAD),$(LOCAL_MODULE))))
-    ifdef LOCAL_CFLAGS
-      LOCAL_CFLAGS += -pthread
-    else
-      LOCAL_CFLAGS := -pthread
-    endif
-  endif
-endif
-
 # Do not use graphite on host modules or the clang compiler.
 # Also do not bother using on darwin.
 ifeq ($(HOST_OS),linux)
