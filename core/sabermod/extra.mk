@@ -74,7 +74,7 @@ ifneq ($(filter arm arm64,$(TARGET_ARCH)),)
         LOCAL_CFLAGS := -fsanitize=leak
       endif
       ifneq (1,$(words $(filter libwebviewchromium libc_netbsd,$(LOCAL_MODULE))))
-        LOCAL_CFLAGS += -fopenmp
+        LOCAL_CFLAGS += -lgomp -lgcc -fopenmp
         ifdef LOCAL_LDLIBS
           LOCAL_LDLIBS += -lgomp -lgcc
         else
